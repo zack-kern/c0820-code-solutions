@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 function getWords(string) {
   var myArray = string.split(' ');
-  if (myArray === ' ') {
+  if (string === '') {
     return [];
-  } else {
+  } else if (myArray) {
     return myArray;
   }
 }
