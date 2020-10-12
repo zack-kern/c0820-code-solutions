@@ -1,9 +1,10 @@
-/* eslint-disable no-console */
 {
   "nextId": 5,
   "notes": {
     "1": "I should drink more agua.",
     "2": "What does the fox say?",
-    "3": "Chill out fox youll get your day again"
+    "3": "Chill out fox youll get your day again",
+    "4": "hehe xd",
+    "5": "Does this work????"
   }
 }
