@@ -9,6 +9,7 @@ if (process.argv[2] === 'read') {
 } else if (process.argv[2] === 'create') {
   const parseStuff = dataJ.notes;
   parseStuff[dataJ.nextId] = process.argv[3];
+  dataJ.nextId++;
   var finalWrite = JSON.stringify(dataJ, null, 2);
   fs.writeFile('data.json', finalWrite, err => {
     if (err) throw err;
