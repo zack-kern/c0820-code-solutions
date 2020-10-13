@@ -14,6 +14,7 @@ app.use((req, res, next) => {
       res.sendFile('./styles.css', options);
       break;
     default:
+      res.sendStatus(404);
       break;
   }
 });
