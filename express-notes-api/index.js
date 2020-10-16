@@ -54,5 +54,47 @@ app.post('/api/notes', (req, res) => {
   }
 });
 
+// Clients can DELETE a note by id.
+app.delete('/api/notes/:id', (req, res) => {
+  const fs = require('fs');
+  var parsedID = parseInt(req.params.id);
+  var theNotes = data.notes;
+  if (Math.sign(parsedID) === 0 || Math.sign(parsedID) === -1 || isNaN(parsedID)) {
+    res.status(400).send('Fix ya number pal');
+  } else if (req.params.id in theNotes) {
+    delete theNotes[parsedID];
+  } else {
+    var err = { error: 'the selected index cannot be found.' };
+    res.status(404).send(err);
+  }
+  data.notes = theNotes;
+  const myData = data;
+  fs.writeFile('./data.json', JSON.stringify(myData, null, 2), 'utf-8', err => {
+    if (err) throw err;
+  });
+  res.status(201);
+});
+
+// Clients can replace a note(PUT) by id.
+app.post('/api/notes/:id', (req, res) => {
+  const fs = require('fs');
+  var parsedID = parseInt(req.params.id);
+  var theNotes = data.notes;
+  if (Math.sign(parsedID) === 0 || Math.sign(parsedID) === -1 || isNaN(parsedID)) {
+    res.status(400).send('Fix ya number pal');
+  } else if (req.params.id in theNotes) {
+    var pushedObj = { id: parsedID, content: req.body.content };
+    theNotes[req.params.id] = pushedObj;
+    data.notes = theNotes;
+    var myData = data;
+  } else {
+    var err = { error: 'the selected index cannot be found.' };
+    res.status(404).send(err);
+  }
+  fs.writeFile('./data.json', JSON.stringify(myData, null, 2), 'utf-8', err => {
+    if (err) throw err;
+  });
+  res.status(201).send({ content: req.body.content, id: parsedID });
+});
 // eslint-disable-next-line no-console
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
