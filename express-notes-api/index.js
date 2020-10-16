@@ -8,14 +8,10 @@ app.use(express.json());
 app.get('/api/notes', (req, res) => {
   var arr = [];
   var theNotes = data.notes;
-  if (theNotes.length !== 0) {
-    for (var property in theNotes) {
-      arr.push(theNotes[property]);
-    }
-    res.send(arr);
-  } else {
-    res.send(arr);
+  for (var property in theNotes) {
+    arr.push(theNotes[property]);
   }
+  res.send(arr);
 });
 
 // Clients can GET a single note by id.
