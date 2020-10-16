@@ -3,7 +3,7 @@
   "notes": {
     "1": {
       "id": 1,
-      "content": "nooooooo"
+      "content": "The event loop is how a JavaScript runtime pushes asynchronous callbacks onto the stack once the stack is cleared."
     },
     "2": {
       "id": 2,
@@ -15,7 +15,7 @@
     },
     "4": {
       "id": 4,
-      "content": "A closure is formed when a function retains access to variables in its lexical scope."
+      "content": "nooooooo"
     }
   }
 }

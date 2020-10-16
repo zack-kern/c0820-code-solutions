@@ -2,11 +2,11 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const data = require('./data.json');
-var arr = [];
 app.use(express.json());
 
 // Clients can GET a list of notes
 app.get('/api/notes', (req, res) => {
+  var arr = [];
   var theNotes = data.notes;
   if (theNotes.length !== 0) {
     for (var property in theNotes) {
@@ -23,7 +23,8 @@ app.get('/api/notes/:id', (req, res) => {
   var parsedID = parseInt(req.params.id);
   var theNotes = data.notes;
   if (Math.sign(parsedID) === 0 || Math.sign(parsedID) === -1 || isNaN(parsedID)) {
-    res.status(400).send('Fix ya number pal');
+    var resp = { error: 'Fix ya number pal!' };
+    res.status(400).json(resp);
   } else if (req.params.id in theNotes) {
     res.status(200).send(theNotes[parsedID]);
   } else {
@@ -46,9 +47,13 @@ app.post('/api/notes', (req, res) => {
     data.nextId++;
     const myData = data;
     fs.writeFile('./data.json', JSON.stringify(myData, null, 2), 'utf-8', err => {
-      if (err) throw err;
+      if (err) {
+        var errOb = { error: 'Unexpectedly failed....' };
+        res.status(500).send(errOb);
+      } else {
+        res.status(201).send({ content: bod.content, id: id });
+      }
     });
-    res.status(201).send({ content: bod.content, id: id });
   } else {
     res.status(400).send({ error: "request body must have a 'content' property." });
   }
@@ -60,7 +65,8 @@ app.delete('/api/notes/:id', (req, res) => {
   var parsedID = parseInt(req.params.id);
   var theNotes = data.notes;
   if (Math.sign(parsedID) === 0 || Math.sign(parsedID) === -1 || isNaN(parsedID)) {
-    res.status(400).send('Fix ya number pal');
+    var resp = { error: 'Fix ya number pal!' };
+    res.status(400).json(resp);
   } else if (req.params.id in theNotes) {
     delete theNotes[parsedID];
   } else {
@@ -70,9 +76,13 @@ app.delete('/api/notes/:id', (req, res) => {
   data.notes = theNotes;
   const myData = data;
   fs.writeFile('./data.json', JSON.stringify(myData, null, 2), 'utf-8', err => {
-    if (err) throw err;
+    if (err) {
+      var errOb = { error: 'Unexpectedly failed....' };
+      res.status(500).send(errOb);
+    } else {
+      res.status(204).send('');
+    }
   });
-  res.status(201);
 });
 
 // Clients can replace a note(PUT) by id.
@@ -81,7 +91,8 @@ app.post('/api/notes/:id', (req, res) => {
   var parsedID = parseInt(req.params.id);
   var theNotes = data.notes;
   if (Math.sign(parsedID) === 0 || Math.sign(parsedID) === -1 || isNaN(parsedID)) {
-    res.status(400).send('Fix ya number pal');
+    var resp = { error: 'Fix ya number pal!' };
+    res.status(400).json(resp);
   } else if (req.params.id in theNotes) {
     var pushedObj = { id: parsedID, content: req.body.content };
     theNotes[req.params.id] = pushedObj;
@@ -92,9 +103,13 @@ app.post('/api/notes/:id', (req, res) => {
     res.status(404).send(err);
   }
   fs.writeFile('./data.json', JSON.stringify(myData, null, 2), 'utf-8', err => {
-    if (err) throw err;
+    if (err) {
+      var errOb = { error: 'Unexpectedly failed....' };
+      res.status(500).send(errOb);
+    } else {
+      res.status(201).send({ content: req.body.content, id: parsedID });
+    }
   });
-  res.status(201).send({ content: req.body.content, id: parsedID });
 });
 // eslint-disable-next-line no-console
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
