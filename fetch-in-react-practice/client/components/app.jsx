@@ -45,46 +45,52 @@ class App extends React.Component {
       body: JSON.stringify(newTodo)
     })
       .then(response => response.json())
-      .then(data => data)
-      .catch(error => {
-        console.error('Errz', error);
+      .then(data => {
+        // get a copy of the original array in state
+        const updatedTodos = [...this.state.todos];
+        // add the created todo to it
+        updatedTodos.push(data);
+        // setState to trigger re-render
+        this.setState({ todos: updatedTodos });
       });
   }
 
   toggleCompleted(todoId) {
     /**
-     * Find the index of the matching todo in the state array.
-     * Find its "isCompleted" status.
-     * Make a new Object containing the opposite "isCompleted" status.
-     * Use fetch to send a PATCH request to `/api/todos/${todoId}`
-     * Then 😉, once the response JSON is received and parsed,
-     * replace the old todo in state.
-     *
-     * TIP: Be sure to SERIALIZE the updates in the body with JSON.stringify()
-     * And specify the "Content-Type" header as "application/json"
-     *
-     */
-    var mySpecificItem = this.state.todos[todoId - 1];
-    var stat = mySpecificItem.isCompleted;
-    var oldAndKindaLameGenericItem = this.state.todos;
-    if (stat) {
-      stat = false;
+       * Find the index of the matching todo in the state array.
+       * Find its "isCompleted" status.
+       * Make a new Object containing the opposite "isCompleted" status.
+       * Use fetch to send a PATCH request to `/api/todos/${todoId}`
+       * Then 😉, once the response JSON is received and parsed,
+       * replace the old todo in state.
+       *
+       * TIP: Be sure to SERIALIZE the updates in the body with JSON.stringify()
+       * And specify the "Content-Type" header as "application/json"
+       *
+       */
+    var mySpecificItem = this.state.todos;
+    var myNewSpecificItem = [...mySpecificItem];
+    myNewSpecificItem = myNewSpecificItem.find(myNewSpecificItem => myNewSpecificItem.id === todoId);
+    // var stat = mySpecificItem.isCompleted;
+    var daId = myNewSpecificItem.isCompleted;
+    if (daId) {
+      daId = false;
     } else {
-      stat = true;
+      daId = true;
     }
-    mySpecificItem.isCompleted = stat;
-    oldAndKindaLameGenericItem.map(x => x);
+    myNewSpecificItem.isCompleted = daId;
+    mySpecificItem.map(x => x);
     fetch(`/api/todos/${todoId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        isCompleted: stat
+        isCompleted: daId
       })
     })
       .then(response => response.json())
-      .then(data => data)
+      .then(data => this.setState({ data, toggleCompleted: true }))
       .catch(error => {
         console.error('Errz', error);
       });
