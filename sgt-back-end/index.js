@@ -75,6 +75,7 @@ app.post('/api/grades', (req, res, next) => {
   var COU = req.body.course;
   var GRA = req.body.grade;
   var numGrade = parseInt(GRA);
+  var arr = [NAM, COU, numGrade];
   if (isNaN(numGrade)) {
     res.status(400).json({
       error: 'Lets, uhhh, maybe supply an actual integer grade value, guys ....'
@@ -82,10 +83,10 @@ app.post('/api/grades', (req, res, next) => {
   } else {
     var sql3 = `
   insert into "grades" ("name", "course", "grade")
-  values('${NAM}', '${COU}', ${numGrade})
+  values($1, $2, $3)
   returning *;
   `;
-    db.query(sql3)
+    db.query(sql3, arr)
       .then(result => {
         const student = result.rows;
         res.status(201);
@@ -111,6 +112,7 @@ app.put('/api/grades/:gradeId', (req, res, next) => {
   var COU = req.body.course;
   var GRA = req.body.grade;
   var numGrade = parseInt(GRA);
+  var arr = [NAM, COU, numGrade, gradeId];
   if (isNaN(numGrade)) {
     res.status(400).json({
       error: 'Lets, uhhh, maybe supply an actual integer grade value, guys ....'
@@ -118,13 +120,13 @@ app.put('/api/grades/:gradeId', (req, res, next) => {
   } else {
     var sql4 = `
     update "grades"
-    set "name" = '${NAM}',
-        "course" = '${COU}',
-        "grade" = ${numGrade}
-    where "gradeId" = ${gradeId}
+    set "name" = $1,
+        "course" = $2,
+        "grade" = $3
+    where "gradeId" = $4
     returning *;
     `;
-    db.query(sql4)
+    db.query(sql4, arr)
       .then(result => {
         const student = result.rows;
         if (!student) {
@@ -152,12 +154,13 @@ app.delete('/api/grades/:gradeId', (req, res, next) => {
       error: '"gradeId" must be a positive integer'
     });
   }
+  var arr = [gradeId];
   var sql5 = `
     delete from "grades"
-    where "gradeId" = ${gradeId}
+    where "gradeId" = $1
     returning *;
     `;
-  db.query(sql5)
+  db.query(sql5, arr)
     .then(result => {
       const student = result.rows;
       if (!student) {
